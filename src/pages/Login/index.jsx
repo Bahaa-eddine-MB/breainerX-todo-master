@@ -6,6 +6,32 @@ import { useState } from "react";
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+
+    if(!emailRegex.test(email)) {
+      setError("Invalid email format");
+      return;
+    }
+
+    if(password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+    setError("");
+    setLoading(!loading);
+    navigate("/dashboard");
+  };
 
   return (
     <main className="bg-background h-screen flex flex-col items-center justify-center">
@@ -19,8 +45,19 @@ const LoginPage = () => {
           Sign in to your account to continue
         </p>
         <div className="space-y-4 flex flex-col pb-6">
-          <Input label="Email" type="email" placeholder="Enter your email" />
+          {error && (
+            <div className="text-red p-4 border-[1.5px] rounded-lg border-red">
+              {error}{" "}
+            </div>
+          )}
           <Input
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            onChange={(e) => setPassword(e.target.value)}
             label="Password"
             type="password"
             placeholder="Enter your password"
@@ -30,9 +67,7 @@ const LoginPage = () => {
           Icon={<LogIn size={16} />}
           text="Sign In"
           onClick={(e) => {
-            e.preventDefault();
-            setLoading(!loading);
-            navigate("/dashboard");
+            handleLogin(e);
           }}
           isLoading={loading}
         />

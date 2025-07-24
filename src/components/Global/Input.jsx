@@ -11,7 +11,7 @@ const Input = ({ label, type, placeholder, onChange }) => {
       <div className="relative">
         <input
           onChange={onChange}
-          className="border-[1.5px] border-gray-400 rounded-md px-3 py-1 w-full"
+          className="border-[1.5px] border-gray-400 rounded-md px-3 py-2 w-full"
           type={
             type !== "password" ? type : !showPassword ? "password" : "text"
           }
