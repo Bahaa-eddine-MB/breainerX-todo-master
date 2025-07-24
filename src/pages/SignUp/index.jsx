@@ -46,7 +46,6 @@ const SignUpPage = () => {
       setError("Passwords do not match");
       return;
     }
-
     setError("");
     setLoading(!loading);
     navigate("/dashboard");

@@ -6,7 +6,7 @@ const NavBar = () => {
       const navigate = useNavigate();
 
   return (
-    <header className="flex justify-between items-center    px-[10%] py-4 bg-white shadow-lg sticky top-0 z-50">
+    <header className="flex justify-between items-center    px-[10%] py-4 bg-white shadow-lg sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h1 className="text-primary font-bold text-2xl">TodoMaster</h1>
         <div className="flex items-center gap-2 text-gray-600">
