@@ -1,5 +1,3 @@
-import "./style.css"
-
 const Button = ({ onClick, text, Icon, isLoading }) => {
   return (
     <button
