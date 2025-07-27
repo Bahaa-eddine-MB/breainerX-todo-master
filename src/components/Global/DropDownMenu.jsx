@@ -1,54 +1,58 @@
 import { ChevronDown, Check } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-const DropDownMenu = ({ options, onOptionChose, label }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const DropDownMenu = ({ options, defaultTitle, onOptionChose, label }) => {
+  const [show, setShow] = useState(false);
+  const [title, setTitle] = useState(defaultTitle);
+  const ref = useRef(null);
 
-  const [title, setTitle] = useState("All Tasks");
-  const selectRef = useRef(null);
-  function handleClickOutside(event) {
-    if (selectRef.current && !selectRef.current.contains(event.target)) {
-      setIsOpen(false);
+  const handleClickOutside = (event) => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setShow(false);
     }
-  }
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [ref]);
 
   return (
     <>
-      <div ref={selectRef} className="relative">
-        {label && ( <p className="text-sm pb-2">{label}</p>)}
-       
+      <div ref={ref} className="relative flex flex-col gap-2">
+        {label && <label className="text-sm  ">{label}</label>}
         <p
-          onClick={() => {
-            setIsOpen(!isOpen);
-          }}
-          className="flex items-center bg-white px-4 py-2 border-[1.5px] rounded-lg gap-12 transition-all duration-500 hover:cursor-pointer"
+          onClick={() => setShow(!show)}
+          className="bg-white border-gray-300 px-4 py-2 border-[1.5px] h-10 rounded-md flex justify-between items-center gap-12 hover:cursor-pointer"
         >
-          {title} <ChevronDown size={16} />{" "}
+          {title}{" "}
+          <ChevronDown
+            className={`${
+              show ? "rotate-180" : "rotate-0"
+            } transition-all duration-300  `}
+            size={16}
+          />
         </p>
-        {isOpen && (
-          <div className="absolute top-12 z-30 left-0 w-full bg-white border-[1.5px] rounded-lg transition-all duration-500">
-            {options.map((option, index) => (
-              <div key={index} className={` `} onClick={() => {}}>
-                <p
+        {show && (
+          <ul className= {` ${label ? 'top-[75px]' : ' top-[45px]'} absolute z-40 left-0 right-0 bg-white border-gray-300  border-[1.5px] rounded-md  flex flex-col gap-1 p-1`} >
+            {options.map((option, index) => {
+              return (
+                <li
                   onClick={() => {
                     setTitle(option);
-                    setIsOpen(false);
+                    setShow(false);
                     onOptionChose(option);
                   }}
-                  className="py-2 flex gap-2 items-center  hover:bg-gray-100 p-2 hover:cursor-pointer"
+                  className="transition-all flex items-center gap-2 duration-500 hover:bg-gray-200 hover:cursor-pointer px-3 py-1 rounded-md"
+                  key={index}
                 >
-                  {title === option && <Check size={16} />} {option}
-                </p>
-              </div>
-            ))}
-          </div>
+                  {option === title && <Check size={16} />} {option}
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
     </>

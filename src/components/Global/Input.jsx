@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-const Input = ({ label, type, placeholder, onChange }) => {
+const Input = ({ label, type, placeholder, onChange, defaultValue }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex flex-col ">
@@ -17,6 +17,7 @@ const Input = ({ label, type, placeholder, onChange }) => {
           }
           id={label}
           placeholder={placeholder}
+          defaultValue={defaultValue}
         />
         {type === "password" && (
           <div className="absolute hover:cursor-pointer right-3 top-1/2 transform -translate-y-1/2">
