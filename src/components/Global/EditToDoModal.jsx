@@ -1,9 +1,17 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Input from "./Input";
 import DropDownMenu from "./DropDownMenu";
 import { X } from "lucide-react";
 
-const EditModal = ({ setShowModel, title, description, priority, date }) => {
+const EditModal = ({
+  setShowModel,
+  title,
+  description,
+  priority,
+  date,
+  setTasks,
+  index
+}) => {
   const selectRef = useRef(null);
   function handleClickOutside(event) {
     if (selectRef.current && !selectRef.current.contains(event.target)) {
@@ -17,6 +25,13 @@ const EditModal = ({ setShowModel, title, description, priority, date }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const [newTask, setNewTask] = useState({
+    title: title || "",
+    description: description || "",
+    priority: priority || "Low",
+    date: date || "",
+  });
 
   return (
     <div className=" z-50 fixed inset-0  overflow-hidden w-screen h-screen bg-black bg-opacity-45">
@@ -39,16 +54,20 @@ const EditModal = ({ setShowModel, title, description, priority, date }) => {
           Create a new task to add to your todo list.
         </p>
         <Input
-          defaultValue={title}
+          value={newTask.title}
           label={"Title"}
           placeholder={"Enter Task title"}
+          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
         />
         <div className="flex flex-col ">
           <label className="text-sm pb-2" htmlFor={"description"}>
             Description
           </label>
           <textarea
-            defaultValue={description}
+            value={newTask.description}
+            onChange={(e) =>
+              setNewTask({ ...newTask, description: e.target.value })
+            }
             className="border-[1.5px] border-gray-400 rounded-md px-3 py-2 w-full"
             id={"description"}
             placeholder={"Enter Task description"}
@@ -56,18 +75,29 @@ const EditModal = ({ setShowModel, title, description, priority, date }) => {
           <div className="flex gap-4 mt-4">
             <DropDownMenu
               label={"Priority"}
-              defaultTitle={priority}
+              defaultTitle={newTask.priority}
               options={["Low", "Medium", "High"]}
+              onOptionChose={(option) => {
+                setNewTask({ ...newTask, priority: option });
+              }}
             />
             <Input
-              defaultValue={date}
+              value={newTask.date}
               label={"Due Date"}
               type={"date"}
               placeholder={"Enter Due Date"}
+              onChange={(e) => setNewTask({ ...newTask, date: e.target.value })}
             />
           </div>
 
-          <button className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70">
+          <button onClick={() => {
+            setTasks((prevTasks) =>
+              prevTasks.map((task,i) =>
+                index === i ? newTask : task
+              )
+            );
+            setShowModel(false);
+          }} className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70">
             Save Changes
           </button>
         </div>

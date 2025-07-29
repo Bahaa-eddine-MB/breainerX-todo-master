@@ -2,14 +2,14 @@ import { Calendar, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import EditModal from "../Global/EditToDoModal";
 
-const TodoCard = ({ title, description, priority, date, isCompleted }) => {
+const TodoCard = ({ title, description, priority, date, isCompleted,setTasks,index }) => {
   const [completed, setCompleted] = useState(isCompleted);
 
   const [show, setShow] = useState(false);
 
   return (
     <>
-      {show && <EditModal date={date}  description={description} priority={priority} title={title} setShowModel={setShow} />}
+      {show && <EditModal index={index} setTasks={setTasks} date={date}  description={description} priority={priority} title={title} setShowModel={setShow} />}
       <div
         className={`${
           completed && "opacity-70"
@@ -23,7 +23,14 @@ const TodoCard = ({ title, description, priority, date, isCompleted }) => {
               name="done"
               checked={completed}
               id="done"
-              onChange={() => setCompleted(!completed)}
+              onChange={() => {
+                setCompleted(!completed);
+                setTasks((prevTasks) =>
+                  prevTasks.map((task, i) =>
+                    i === index ? { ...task, isCompleted: !completed } : task
+                  )
+                );
+              }}
             />
             <h3
               className={`${
@@ -43,9 +50,9 @@ const TodoCard = ({ title, description, priority, date, isCompleted }) => {
               size={16}
             />
             <Trash
-            onClick={()=>{
-              
-            }}
+              onClick={() => {
+                setTasks((prevTasks) => prevTasks.filter((task, i) => i !== index));
+              }}
               className="text-red transition-all duration-300 hover:cursor-pointer w-8 h-8 hover:bg-gray-200 p-2 rounded-md"
               size={16}
             />
