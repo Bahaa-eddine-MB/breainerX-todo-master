@@ -2,7 +2,7 @@ import { Calendar, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import EditModal from "../Global/EditToDoModal";
 
-const TodoCard = ({ title, description, priority, date, isCompleted }) => {
+const TodoCard = ({ title, description, priority, date, isCompleted ,setTasks}) => {
   const [completed, setCompleted] = useState(isCompleted);
 
   const [show, setShow] = useState(false);
@@ -44,7 +44,7 @@ const TodoCard = ({ title, description, priority, date, isCompleted }) => {
             />
             <Trash
             onClick={()=>{
-              
+              set
             }}
               className="text-red transition-all duration-300 hover:cursor-pointer w-8 h-8 hover:bg-gray-200 p-2 rounded-md"
               size={16}

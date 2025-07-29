@@ -65,6 +65,7 @@ const DashboardPage = () => {
               <TodoCard
                 key={index}
                 title={task.title}
+                setTasks= {setTasks}
                 description={task.description}
                 priority={task.priority}
                 date={task.date}
