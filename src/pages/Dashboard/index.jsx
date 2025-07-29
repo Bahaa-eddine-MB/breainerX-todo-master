@@ -69,10 +69,10 @@ const DashboardPage = () => {
                 if (filter === "Completed") return task.isCompleted;
                 if (filter === "High Priority") return task.priority === "High";
               })
-              .map((task, index) => (
+              .map((task) => (
                 <TodoCard
-                  key={index}
-                  index={index}
+                  key={task.id}
+                  id={task.id}
                   title={task.title}
                   setTasks={setTasks}
                   description={task.description}

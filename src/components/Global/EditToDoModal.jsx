@@ -10,7 +10,7 @@ const EditModal = ({
   priority,
   date,
   setTasks,
-  index
+  id
 }) => {
   const selectRef = useRef(null);
   function handleClickOutside(event) {
@@ -31,6 +31,7 @@ const EditModal = ({
     description: description || "",
     priority: priority || "Low",
     date: date || "",
+    id: id || Date.now().toLocaleString(),
   });
 
   return (
@@ -92,8 +93,8 @@ const EditModal = ({
 
           <button onClick={() => {
             setTasks((prevTasks) =>
-              prevTasks.map((task,i) =>
-                index === i ? newTask : task
+              prevTasks.map((task) =>
+                id === task.id ? newTask : task
               )
             );
             setShowModel(false);
