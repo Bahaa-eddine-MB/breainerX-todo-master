@@ -9,6 +9,7 @@ import { useState } from "react";
 const DashboardPage = () => {
   const [showModel, setShowModel] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState("All Tasks");
 
   return (
     <>
@@ -20,25 +21,25 @@ const DashboardPage = () => {
             <TodoStats
               Icon={<Circle size={34} className="text-primary" />}
               title="Total Tasks"
-              count={1}
+              count={tasks.length}
               color="text-black"
             />
             <TodoStats
               Icon={<CircleCheck size={34} className="text-green" />}
               title="Completed"
-              count={1}
+              count={tasks.filter((task) => task.isCompleted).length}
               color="text-green"
             />
             <TodoStats
               Icon={<Clock3 size={34} className="text-orange" />}
               title="Pending"
-              count={1}
+              count={tasks.filter((task) => !task.isCompleted).length}
               color="text-orange"
             />
             <TodoStats
               Icon={<Calendar size={34} className="text-red" />}
               title="High Priority"
-              count={1}
+              count={tasks.filter((task) => task.priority === "High").length}
               color="text-red"
             />
           </section>
@@ -47,7 +48,7 @@ const DashboardPage = () => {
               options={["All Tasks", "Pending", "Completed", "High Priority"]}
               defaultTitle={"All Tasks"}
               onOptionChose={(option) => {
-                console.log(option);
+                setFilter(option);
               }}
             />
             <button
@@ -61,18 +62,26 @@ const DashboardPage = () => {
             </button>
           </section>
           <section className="mt-12 pb-16 flex flex-col gap-6">
-            {tasks.map((task, index) => (
-              <TodoCard
-                key={index}
-                title={task.title}
-                setTasks= {setTasks}
-                description={task.description}
-                priority={task.priority}
-                date={task.date}
-                isCompleted={task.isCompleted}
-              />
-            ))}
-        </section>
+            {tasks
+              .filter((task) => {
+                if (filter === "All Tasks") return true;
+                if (filter === "Pending") return !task.isCompleted;
+                if (filter === "Completed") return task.isCompleted;
+                if (filter === "High Priority") return task.priority === "High";
+              })
+              .map((task) => (
+                <TodoCard
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  setTasks={setTasks}
+                  description={task.description}
+                  priority={task.priority}
+                  date={task.date}
+                  isCompleted={task.isCompleted}
+                />
+              ))}
+          </section>
         </div>
       </main>
     </>

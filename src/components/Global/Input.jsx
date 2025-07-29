@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-const Input = ({ label, type, placeholder, onChange, defaultValue }) => {
+const Input = ({ label, type, placeholder, onChange, defaultValue,value }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex flex-col ">
@@ -16,6 +16,7 @@ const Input = ({ label, type, placeholder, onChange, defaultValue }) => {
             type !== "password" ? type : !showPassword ? "password" : "text"
           }
           id={label}
+          value={value}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />

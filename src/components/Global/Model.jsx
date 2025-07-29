@@ -23,6 +23,7 @@ const Model = ({ setTasks, setShowModel }) => {
     description: "",
     priority: "Low",
     date: "",
+    id: '', // Unique ID for the task
     isCompleted: false,
   });
 
@@ -31,7 +32,7 @@ const Model = ({ setTasks, setShowModel }) => {
       alert("Please fill all fields");
       return;
     }
-    setTasks((prevTasks) => [...prevTasks, task]);
+    setTasks((prevTasks) => [...prevTasks, { ...task, id: Date.now().toLocaleString() }]);
     setShowModel(false);
   }
 
