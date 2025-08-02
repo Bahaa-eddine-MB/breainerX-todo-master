@@ -12,7 +12,6 @@ const DashboardPage = () => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All Tasks");
 
-
   async function fetchTasks() {
     try {
       

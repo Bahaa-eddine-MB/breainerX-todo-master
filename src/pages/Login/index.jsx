@@ -4,7 +4,7 @@ import Input from "../../components/Global/Input";
 import Button from "../../components/Global/Button";
 import { useState } from "react";
 
-import { signIn } from "../../api/userCallApi";
+import { useAuth } from "../../hooks/authContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -38,8 +39,7 @@ const LoginPage = () => {
     async function signInUser() {
     try {
       setLoading(true);
-      const result = await signIn({ email, password });
-      localStorage.setItem("token", result.token);
+       await login({ email, password });
       navigate("/dashboard");
     } catch (error) {
       console.error("Error creating user:", error);
