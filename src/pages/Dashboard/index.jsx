@@ -4,12 +4,35 @@ import DropDownMenu from "../../components/Global/DropDownMenu";
 import Model from "../../components/Global/Model";
 import NavBar from "../../components/Global/NavBar";
 import { CircleCheck, Circle, Clock3, Calendar, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import api from "../../lib/axiosApi";
 
 const DashboardPage = () => {
   const [showModel, setShowModel] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All Tasks");
+
+
+  async function fetchTasks() {
+    try {
+      
+      const result = await api.get(
+        `tasks`
+      );
+      
+      setTasks(result.data);
+      
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchTasks();
+  },[])
+
+
+
 
   return (
     <>
@@ -39,7 +62,7 @@ const DashboardPage = () => {
             <TodoStats
               Icon={<Calendar size={34} className="text-red" />}
               title="High Priority"
-              count={tasks.filter((task) => task.priority === "High").length}
+              count={tasks.filter((task) => task.priority === "high").length}
               color="text-red"
             />
           </section>
@@ -67,12 +90,12 @@ const DashboardPage = () => {
                 if (filter === "All Tasks") return true;
                 if (filter === "Pending") return !task.isCompleted;
                 if (filter === "Completed") return task.isCompleted;
-                if (filter === "High Priority") return task.priority === "High";
+                if (filter === "High Priority") return task.priority === "high";
               })
               .map((task) => (
                 <TodoCard
-                  key={task.id}
-                  id={task.id}
+                  key={task._id}
+                  id={task._id}
                   title={task.title}
                   setTasks={setTasks}
                   description={task.description}

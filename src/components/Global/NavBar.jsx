@@ -17,6 +17,7 @@ const NavBar = () => {
 
       <button
         onClick={() => {
+          localStorage.removeItem("token");
           navigate("/sign-in");
         }}
         className="transition-all duration-500 hover:bg-gray-200 flex items-center gap-2 border-[1.5px] text-sm text-gray-700 border-gray-400 rounded-md px-4 py-2"

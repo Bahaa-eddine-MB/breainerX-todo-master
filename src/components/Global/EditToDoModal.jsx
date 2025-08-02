@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import Input from "./Input";
 import DropDownMenu from "./DropDownMenu";
 import { X } from "lucide-react";
+import api from "../../lib/axiosApi";
 
 const EditModal = ({
   setShowModel,
@@ -10,7 +11,7 @@ const EditModal = ({
   priority,
   date,
   setTasks,
-  id
+  id,
 }) => {
   const selectRef = useRef(null);
   function handleClickOutside(event) {
@@ -29,10 +30,24 @@ const EditModal = ({
   const [newTask, setNewTask] = useState({
     title: title || "",
     description: description || "",
-    priority: priority || "Low",
+    priority: priority || "low",
     date: date || "",
-    id: id || Date.now().toLocaleString(),
   });
+
+  async function updateTask() {
+    try {
+      await api.put(`/tasks/${id}`, {
+        ...newTask,
+        priority: newTask.priority.toLowerCase(),
+      });
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (id === task._id ? newTask : task))
+      );
+      setShowModel(false);
+    } catch (error) {
+      console.log("Error updating task:", error);
+    }
+  }
 
   return (
     <div className=" z-50 fixed inset-0  overflow-hidden w-screen h-screen bg-black bg-opacity-45">
@@ -91,14 +106,12 @@ const EditModal = ({
             />
           </div>
 
-          <button onClick={() => {
-            setTasks((prevTasks) =>
-              prevTasks.map((task) =>
-                id === task.id ? newTask : task
-              )
-            );
-            setShowModel(false);
-          }} className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70">
+          <button
+            onClick={() => {
+              updateTask();
+            }}
+            className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70"
+          >
             Save Changes
           </button>
         </div>

@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/Global/Input";
 import Button from "../../components/Global/Button";
 import { useState } from "react";
+import axios from "axios";
+import api from "../../lib/axiosApi";
+
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -14,7 +17,6 @@ const SignUpPage = () => {
     confirmPassword: "",
   });
 
-  
   const handeSignUp = (e) => {
     e.preventDefault();
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -47,9 +49,36 @@ const SignUpPage = () => {
       return;
     }
     setError("");
-    setLoading(!loading);
-    navigate("/dashboard");
+    createUser();
   };
+
+  async function createUser() {
+    try {
+      setLoading(true);
+      await api.post(
+        `/users/sign-up`,
+        {
+          name: user.fullName,
+          email: user.email,
+          password: user.password,
+        }
+      );
+      const response = await api.post(
+        `/users/sign-in`,
+        {
+          email: user.email,
+          password: user.password,
+        }
+      );
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error creating user:", error);
+      setError(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <main className="bg-background h-screen flex flex-col items-center justify-center">

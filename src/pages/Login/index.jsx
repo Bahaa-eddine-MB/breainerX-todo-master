@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/Global/Input";
 import Button from "../../components/Global/Button";
 import { useState } from "react";
+
+import { signIn } from "../../api/userCallApi";
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -29,9 +32,23 @@ const LoginPage = () => {
       return;
     }
     setError("");
-    setLoading(!loading);
-    navigate("/dashboard");
+    signInUser()
   };
+
+    async function signInUser() {
+    try {
+      setLoading(true);
+      const result = await signIn({ email, password });
+      localStorage.setItem("token", result.token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error creating user:", error);
+      setError(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   return (
     <main className="bg-background h-screen flex flex-col items-center justify-center">

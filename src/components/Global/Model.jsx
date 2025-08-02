@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import Input from "./Input";
 import DropDownMenu from "./DropDownMenu";
 import { X } from "lucide-react";
+import api from "../../lib/axiosApi";
 
 const Model = ({ setTasks, setShowModel }) => {
   const selectRef = useRef(null);
@@ -23,17 +24,28 @@ const Model = ({ setTasks, setShowModel }) => {
     description: "",
     priority: "Low",
     date: "",
-    id: '', // Unique ID for the task
     isCompleted: false,
   });
 
-  const handleAddTask = ()=>{
-    if(!task.title || !task.description || !task.date) {
+  const handleAddTask = async () => {
+    if (!task.title || !task.description || !task.date) {
       alert("Please fill all fields");
       return;
     }
-    setTasks((prevTasks) => [...prevTasks, { ...task, id: Date.now().toLocaleString() }]);
+    await createTask();
     setShowModel(false);
+  };
+
+  async function createTask() {
+    try {
+      const result = await api.post(`/tasks`, {
+        ...task,
+        priority: task.priority.toLowerCase(),
+      });
+      setTasks((prevTasks) => [...prevTasks, { ...task, id: result.data._id }]);
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
   }
 
   return (
@@ -81,8 +93,8 @@ const Model = ({ setTasks, setShowModel }) => {
                 setTask({ ...task, priority: option });
               }}
               label={"Priority"}
-              defaultTitle={"Low"}
-              options={["Low", "Medium", "High"]}
+              defaultTitle={"low"}
+              options={["low", "medium", "high"]}
             />
             <Input
               label={"Due Date"}
@@ -94,9 +106,12 @@ const Model = ({ setTasks, setShowModel }) => {
             />
           </div>
 
-          <button onClick={()=>{
-            handleAddTask()
-          }} className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70">
+          <button
+            onClick={() => {
+              handleAddTask();
+            }}
+            className="bg-black rounded-lg px-4 py-2  text-white self-end mt-8 transition-all duration-500 hover:opacity-70"
+          >
             Add Task
           </button>
         </div>

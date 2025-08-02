@@ -1,16 +1,66 @@
 import { Calendar, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import EditModal from "../Global/EditToDoModal";
+import api from "../../lib/axiosApi";
 
-const TodoCard = ({ title, description, priority, date, isCompleted,setTasks,id }) => {
+const TodoCard = ({
+  title,
+  description,
+  priority,
+  date,
+  isCompleted,
+  setTasks,
+  id,
+}) => {
   const [completed, setCompleted] = useState(isCompleted);
 
   const [show, setShow] = useState(false);
-console.log(isCompleted);
+
+  async function deleteTask() {
+    try {
+      await api.delete(`/tasks/${id}`);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.log("Error deleting task:", error);
+    }
+  }
+
+  async function updateIsCompletedTask() {
+    try {
+      await api.put(
+        `/tasks/${id}`,
+        {
+          ...{
+            title,
+            description,
+            priority,
+            date,
+          },
+          isCompleted: !completed,
+        }
+      );
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (id === task._id ? { ...task, isCompleted: !completed } : task))
+      );
+      setCompleted(!completed);
+    } catch (error) {
+      console.log("Error updating task:", error);
+    }
+  }
 
   return (
     <>
-      {show && <EditModal id={id} setTasks={setTasks} date={date}  description={description} priority={priority} title={title} setShowModel={setShow} />}
+      {show && (
+        <EditModal
+          id={id}
+          setTasks={setTasks}
+          date={date}
+          description={description}
+          priority={priority}
+          title={title}
+          setShowModel={setShow}
+        />
+      )}
       <div
         className={`${
           completed && "opacity-70"
@@ -25,12 +75,7 @@ console.log(isCompleted);
               checked={completed}
               id="done"
               onChange={() => {
-                setCompleted(!completed);
-                setTasks((prevTasks) =>
-                  prevTasks.map((task) =>
-                    task.id === id ? { ...task, isCompleted: !completed } : task
-                  )
-                );
+                updateIsCompletedTask();
               }}
             />
             <h3
@@ -52,7 +97,7 @@ console.log(isCompleted);
             />
             <Trash
               onClick={() => {
-                setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+                deleteTask();
               }}
               className="text-red transition-all duration-300 hover:cursor-pointer w-8 h-8 hover:bg-gray-200 p-2 rounded-md"
               size={16}
@@ -62,9 +107,9 @@ console.log(isCompleted);
         <div className="flex items-center justify-start pl-8 gap-8">
           <span
             className={`${
-              priority === "High"
+              priority === "high"
                 ? " text-[#991b1b] bg-[#fecaca] border-red"
-                : priority === "Medium"
+                : priority === "medium"
                 ? "text-orange bg-accent-orange border-orange"
                 : "bg-accent-green text-green border-green"
             } px-4  text-sm hover:cursor-pointer  border-[1.5px] rounded-full `}
